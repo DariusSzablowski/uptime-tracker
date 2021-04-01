@@ -25,5 +25,5 @@ cd data_visualizing_web_app
 python manage.py runserver
 ```
 
-![a screenshot of the django-webapp I wrote](./screenshot-django-webapp) "screenshot")
+![a screenshot of the django-webapp I wrote](./screenshot-django-webapp.png) "screenshot")
 
