@@ -4,7 +4,7 @@
 
 At first I wrote a few scripts to track whenever you turn your macOS on and off.
 
-In order for them to work you need to execute the following to lines in your :
+In order for them to work you need to execute the following to lines in your Terminal:
 ```
 sudo defaults write com.apple.loginWindow LoginHook /path/to/script/start_star_logger.sh
 ```
@@ -25,5 +25,5 @@ cd data_visualizing_web_app
 python manage.py runserver
 ```
 
-![a screenshot of the django-webapp I wrote](/screenshot-django-webapp) "screenshot")
+![a screenshot of the django-webapp I wrote](./screenshot-django-webapp) "screenshot")
 
