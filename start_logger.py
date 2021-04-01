@@ -19,8 +19,21 @@ t = time.localtime()
 current_time = time.strftime("%H:%M:%S", t)
 date_plus_time = date + "-" + current_time
 
-with open('/Users/DariusSzablowski/Desktop/uptime tracker/data/log.csv', 'a+') as file:
-    file.write(date_plus_time)
+filename = '/Users/DariusSzablowski/Desktop/uptime tracker/data/log.csv'
+
+with open(filename, 'rb') as fh:
+    first = next(fh).decode()
+
+    fh.seek(-1024, 2)
+    last = fh.readlines()[-1].decode()
+    last_char = last[-1]
+    
+    if ord(last_char) == ord('\n'):
+        with open(filename, 'a+') as file:
+            file.write(date_plus_time)
+    # else: do nothing ;)
+
+
 
 # print(date_plus_time)
 

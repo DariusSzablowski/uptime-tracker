@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>downtime data visualized</title>
+
+  {% load static %}
+  <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+</head>
+
+<body class="h100">
+  <center>
+    <h1>downtime data visualized</b></h1>
+  </center>
+  <hr />
+  <div class="h100" class="row">
+    <div>
+      <canvas id="myChartBar"></canvas>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3"></script>
+
+  <script>
+    var endpoint = '/api';
+
+    $.ajax({
+      method: "GET",
+      url: endpoint,
+      success: function(data) {
+        drawBarGraph(data, 'myChartBar');
+        console.log("drawing");
+      },
+      error: function(error_data) {
+        console.log(error_data);
+      }
+    })
+
+    function drawBarGraph(data, id) {
+      var labels = data.labels;
+      var chartLabel = data.chartLabel;
+      var chartdata = data.chartdata;
+      var chartdataTwo = data.chartdataTwo
+      var chartdataThree = data.chartdataThree;
+      var ctx = document.getElementById(id).getContext('2d');
+      var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "Dataset 1",
+            data: chartdata,
+            backgroundColor: 'rgba(50, 12, 70, 0.2)',
+            borderColor: 'rgba(0, 0, 0, 0.2)',
+            borderWidth: 0.5
+          },
+          {
+            label: "Dataset 2",
+            data: chartdataTwo,
+            backgroundColor: 'rgba(50, 210, 70, 0.2)',
+            borderColor: 'rgba(0, 2, 46, 0.4)',
+            borderWidth: 0.5
+          },
+          {
+            label: "Dataset 3",
+            data: chartdataThree,
+            backgroundColor: 'rgba(50, 12, 70, 0.2)',
+            borderColor: 'rgba(0, 2, 46, 0.4)',
+            borderWidth: 0.5
+          }
+        ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            yAxes: [{
+              ticks: {
+                min: 0,
+                max: 86400, // <-- number of seconds in a day
+                userCallback: function(v) { return epoch_to_hh_mm_ss(v) },
+                stepSize: 15 * 60
+              }
+
+            }],
+            xAxes: [{
+              stacked: true
+            }]
+          },
+          tooltips: {
+            callbacks: {
+              label: function(tooltipItem, data) {
+                return data.datasets[tooltipItem.datasetIndex].label + ': ' + epoch_to_hh_mm_ss(tooltipItem.yLabel)
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function epoch_to_hh_mm_ss(epoch) {
+      // console.log(epoch)
+      // console.log(epoch.constructor)
+      if(!(epoch.constructor === Number)) {
+        epoch = epoch.replace('[', '')
+        epoch = epoch.replace(']', '')
+
+        epoch_string_array = epoch.split(',')
+        epoch_number_array = [parseInt(epoch_string_array[0]), parseInt(epoch_string_array[1])]
+
+        // console.log(epoch_string_array)
+        // console.log(epoch_number_array)
+
+        return new Date(epoch_number_array[0]*1000).toISOString().substr(11, 8) + ' - ' + new Date(epoch_number_array[1]*1000).toISOString().substr(11, 8)
+      } else {
+        return new Date(epoch*1000).toISOString().substr(11, 8)
+      }
+    }
+
+  </script>
+</body>
+
+</html>
